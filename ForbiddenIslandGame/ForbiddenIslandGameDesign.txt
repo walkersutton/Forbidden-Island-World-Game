@@ -1,0 +1,239 @@
+ForbiddenIslandGameDesign.txt
+
+Forbidden Island Game
+
+Cell Class ***************
+
+Fields:
+- double height		- represents the height of the cell
+- int x			- represents the x position of the cell
+- int y			- represents the y position of the cell
+- Cell left		- represents the Cell to the left of this
+- Cell top		- represents the Cell above this
+- Cell right		- represents the Cell to the right of this
+- Cell bottom		- represents the Cell below this
+- boolean isFlooded	- determines if this Cell is flooded
+
+Constructor:
+Cell(double height, int x, int y)
+The left, top, right, and bottom are all set to null when a Cell is constructed. These Cells are later initialized to their rightful neighbors.
+
+Methods:
+WorldImage cellImage()
+This method creates the image of the Cell with the correct color.
+-If the cell is flooded, the cell has a blue-green color with a gradient that makes the blue darker if there is more water above the cell.
+-If the cell is not flooded but below the current water height [prone to flooding], the cell has a red-green color with a gradient that makes the red more vibrant as the water height gets closer to the height of the cell.
+-If the cell is not flooded and above the current water height, the cell has a green color with a gradient that makes the green lighter and more white-like if the height of the cell is taller.
+-If the cell is very very tall, the cell has a bright white color because snow fell on the peak of the mountain.
+
+OceanCell Class *************** [extends Cell Class]
+
+Fields:
+- double height		- represents the height of the cell
+- int x			- represents the x position of the cell
+- int y			- represents the y position of the cell
+- Cell left		- represents the Cell to the left of this
+- Cell top		- represents the Cell above this
+- Cell right		- represents the Cell to the right of this
+- Cell bottom		- represents the Cell below this
+- boolean isFlooded	- determines if this Cell is flooded
+
+Constructor:
+Cell(int x, int y)
+The height of each OceanCell is set to -10.0 by default since all OceanCells must have a height that is below the water height which begins at 0.0.
+
+Methods:
+WorldImage cellImage()
+This method creates the image of the OceanCell with the correct color. Since OceanCells all have the same color, all OceanCells have a blue color.
+
+GamePiece Class ***************
+
+Fields:
+- String name		- represents the type of GamePiece
+- int x			- represents the x position of the GamePiece
+- int y			- represents the y position of the GamePiece
+
+Constructor:
+GamePiece(String name)
+If a GamePiece has a name of "hell", then the x and y values are set to the Posn of the maximum height on the board. Otherwise, the x and y values are set to a random Posn of a land Cell.
+
+Methods:
+Posn peakCell()
+This method returns a Posn of the highest Cell on the STARTING_BOARD.
+
+Posn randomLandCell()
+This method returns a Posn of a random land Cell on the STARTING_BOARD.
+
+void pickUp()
+This method determines if this player GamePiece is on top of a part GamePiece. If it is, it carries the part on the player GamePiece's back. This method is explicitly called on a player type GamePiece.
+
+boolean endGame()
+This method determines if the player won the game. This means that all parts have been picked up and the player successfully got to the helicopter without dipping their toes in the water.
+
+WorldIamge drawGamePiece(String type)
+This method creates the image of the GamePiece depending on what type it is. A player draws a player, a heli draws a helicopter, and a part draws a part.
+
+ForbiddenIslandWorld Class *************** [extends World Class]
+
+Variables:
+
+ISLAND_SIZE	- represents the width and height of the island
+SCALE 		- represents the width and height of a pixel
+TICK_VAL 	- value used to initialize the tick counter
+board 		- represents all of the cells of the current game
+parts 		- represents all of the parts of the current game
+rand 		- a Random object used to compute random values
+numOfParts	- represents the number of parts that start on the board
+STARTING_BOARD 	- represents the starting land cells of the game
+player 		- represents the controlled GamePiece
+heli 		- represents the helicopter
+waterHeight 	- represents the current height of the water
+
+
+
+
+Constructor:
+ForbiddenIslandWorld()
+
+Methods:
+void onTick()
+This method is used to run the game. Every 10 ticks, the water height increases by one unit. This method is also responsible for determining if the player is on top of another GamePiece.
+
+void onKeyEvent(String key)
+This method performs an action depending on what key is pressed during the game.
+"escape" 	- ends the world and displays a String on the last scene
+"r" 		- restarts the world with all new components on a random mountain board
+"m" 		- restarts the world with all new components on a perfect mountain board
+"t" 		- restarts the world with all new components on a random terrain board
+"left" 		- moves the player one x position to the left if the player isn't already against the leftmost wall
+"right" 	- moves the player one x position to the right if the player isn't already against the rightmost wall
+"up" 		- moves the player one y position up if the player isn't already against the uppermost wall
+"down" 		- moves the player one y position down if the player isn't already against the bottommost wall
+
+WorldScene makeScene()
+This method produces the WorldScene of the game.
+
+void resetWorld(int y)
+This method restarts the current game with all new Components
+If y == :	1 - a random mountain world is created
+		2 - a perfect mountain world is created
+		3 - a random terrain world is created
+		else - otherwise, a random terrain world is created signifying the player one the game.
+
+WorldScene lastScene(String s)
+This method stops the game and displays the final scene of the game with the string that is inputted
+
+WorldScene drawer(IList<Cell> list, IList<GamePiece> gList)
+This method creates a WorldScene with all of the components:
+- the player on the top layer
+- the parts below the player
+- the helicopter below the parts
+- the cells below the helicopter [bottom layer]
+
+void initParts()
+This method initializes the parts variable which represents all of the part GamePieces.
+
+ArrayList<ArrayList<Cell>> doubleToCellAL(ArrayList<ArrayList<Double>> list)
+This method creates an ArrayList<ArrayList<Cell>> which represents the Cells using the given ArrayList<ArrayList<Double>> which represents the heights of the Cells
+
+double manhattanHeight(int x, int y)
+This method determines the Manhattan distance of the Cell at the given x and y position.
+
+ArrayList<ArrayList<Double>> mountainHeights()
+This method creates an ArrayList<ArrayList<Double>> which represents the heights of the Cells in a perfect mountain
+
+ArrayList<ArrayList<Double>> randomMountainHeights()
+This method creates an ArrayList<ArrayList<Double>> which represents the heights of the Cells in a random mountain
+
+ArrayList<ArrayList<Double>> randomTerrainHeights()
+This method creates an ArrayList<ArrayList<Double>> which represents the heights of the Cells in a random terrain
+
+void randomTerrainHeightsGenerator(ArrayList<ArrayList<Double>> list, int tx, int ty, int bx, int by)
+This method mutates an ArrayList<ArrayList<Double>> of [0.0]'s to an ArrayList<ArrayList<Double>> with "randomized" doubles. "randomized" is in quotation marks because the doubles aren't technically random. The values are determined using a midpoint formula and a true random shift. The tx, ty, bx, and by represent the top left x, top left y, bottom right x, and bottom right y respectively.
+
+void setAL(ArrayList<ArrayList<T>> list, int x, int y, T input)
+This method mutates the Ta at the given x and y position in the given ArrayList<ArrayList<T>> by overwriting the T with the input T.
+
+T getAL(ArrayList<ArrayList<T>> list, int x, int y)
+This method returns the T at the given x and y position in the given ArrayList<ArrayList<T>>
+
+ArrayList<ArrayList<Cell>> neighborInit(ArrayList<ArrayList<Cell>> list)
+This method initializes the neighbors of the given ArrayList<ArrayList<Cell>> by correctly assigning the top, right, bottom, and left fields.
+
+ArrayUtils Class ***************
+
+Methods:
+IList<T> cellIList(ArrayList<ArrayList<T>> list)
+This method takes an ArrayList<ArrayList<T>> and expands it into an IList<T>. The order of the IList<T> is that the last element is the bottom right element in the ArrayList<ArrayList<T>> and the first element is the top left element in the ArrayList<ArrayList<T>>. [standard English reading order]
+
+IList<T> Class ***************
+
+Methods:
+boolean isCons()
+This method determines if this is a ConsList<T>.
+
+boolean isMt()
+This method determines if this is a MtList<T>.
+
+ConsList<T> asCons()
+This method returns what this is Cons as.
+
+MtList<T> Class *************** [implements IList<T> Class]
+
+Methods:
+
+Iterator<T> iterator()
+This method represents an Iterator for an MtList<T>.
+
+boolean isCons()
+This method determines if this is a ConsList<T>.
+
+boolean isMt()
+This method determines if this is a MtList<T>.
+
+ConsList<T> asCons()
+This method returns what this is Cons as.
+
+ConsList<Cell> Class *************** [implements IList<T> Class]
+
+Fields:
+- Cell first 		- represents the first Cell in this
+- IList<Cell> rest 	- represents the rest of this
+
+Constructor:
+ConsList(Cell first, IList<Cell rest)
+
+Methods:
+
+Iterator<T> iterator()
+This method represents an Iterator for a ConsList<T>.
+
+boolean isCons()
+This method determines if this is a ConsList<T>.
+
+boolean isMt()
+This method determines if this is a MtList<T>.
+
+ConsList<T> asCons()
+This method returns what this is Cons as.
+
+IListIterator<T> Class *************** [implements Iterator<T> Class]
+
+Fields:
+- IList<T> items	- represents the object being iterated over
+
+Constructor:
+IListIterator(IList<T> items)
+
+Methods:
+boolean hasNext()
+This method determines if this's items are cons.
+
+T next()
+This method returns what this has next.
+
+void remove()
+This method is a silly method.
+
+ExampleFlood Class ***************
+This class is the home for the examples.
